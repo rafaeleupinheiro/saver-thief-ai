@@ -2,7 +2,6 @@ package algoritmo;
 
 public class Ladrao extends ProgramaLadrao {
   private int[][] caminho = new int[30][30];
-  private int poupador = 100;
 
   private int contadorLoop = 0;
   private int x = 0;
@@ -18,6 +17,18 @@ public class Ladrao extends ProgramaLadrao {
 
 
   public int acao() {
+    boolean teste = false;
+    for (int i = 0; i < sensor.getAmbienteOlfatoPoupador().length; i++) {
+      if (sensor.getAmbienteOlfatoPoupador()[i] > 0) {
+        teste = true;
+      }
+    }
+
+    if (teste) {
+      faro();
+    }
+
+
     /*if (contadorLoop == 3) {
       contadorLoop = 0;
       return (int) (Math.random() * 5);
@@ -29,9 +40,9 @@ public class Ladrao extends ProgramaLadrao {
     y = (int) sensor.getPosicao().getY();
     this.caminho[x][y] = 1;
 
-    if (ehPoupador(sensor.getVisaoIdentificacao()[7]) || ehPoupador(sensor.getVisaoIdentificacao()[12])
-        || ehPoupador(sensor.getVisaoIdentificacao()[16]) || ehPoupador(sensor.getVisaoIdentificacao()[11])) {
-      return parado;
+    Integer posicaoVizinho = ehVizinhoVisao();
+    if (posicaoVizinho != null) {
+      return roubar(posicaoVizinho);
     } else if (ehPoupador(sensor.getVisaoIdentificacao()[2])) {
       if (ehCelularVazia(sensor.getVisaoIdentificacao()[7])) {
         return cima;
@@ -109,7 +120,7 @@ public class Ladrao extends ProgramaLadrao {
         return parado;
       }
     }
-    return (int) (Math.random() * 5);
+    return random();
   }
 
   private boolean ehPoupador(int valor) {
@@ -124,5 +135,72 @@ public class Ladrao extends ProgramaLadrao {
       return true;
     }
     return false;
+  }
+
+  private int roubar(int valor) {
+    switch (valor) {
+      case 7:
+        return cima;
+      case 11:
+        return esquerda;
+      case 12:
+        return direita;
+      case 16:
+        return baixo;
+    }
+    return random();
+  }
+
+  private Integer ehVizinhoVisao() {
+    if (ehPoupador(sensor.getVisaoIdentificacao()[7])) {
+      return cima;
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[12])) {
+      return direita;
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[16])) {
+      return baixo;
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[11])) {
+      return esquerda;
+    }
+    return null;
+  }
+
+  private Integer ehVizinhoOlfato(int posicaoFaroPoupador) {
+    switch (posicaoFaroPoupador) {
+      case 1:
+        return cima;
+      case 3:
+        return esquerda;
+      case 4:
+        return direita;
+      case 6:
+        return baixo;
+    }
+    return null;
+  }
+
+  private int random() {
+    return (int) (Math.random() * 5);
+  }
+
+
+  private int faro() {
+    int valorFaroPoupador = 0;
+    Integer index = null;
+    for (int i = 0; i < sensor.getAmbienteOlfatoPoupador().length; i++) {
+      int valor = sensor.getAmbienteOlfatoPoupador()[i];
+      if (valorFaroPoupador == 0 && valor > 0) {
+        valorFaroPoupador = valor;
+        index = i;
+      } else if (valor > 0 && valor < valorFaroPoupador) {
+        valorFaroPoupador = valor;
+        index = i;
+      }
+    }
+    return index;
+  }
+
+  private int segueFaro(int posicaoFaroPoupador) {
+
+
   }
 }
