@@ -301,40 +301,6 @@ public class Ladrao extends ProgramaLadrao {
     return null;
   }
 
-  private boolean ehCelularVazia(int valor) {
-    if (valor == 0) {
-      return true;
-    }
-    return false;
-  }
-
-  private int roubar(int valor) {
-    switch (valor) {
-      case 7:
-        return cima;
-      case 11:
-        return esquerda;
-      case 12:
-        return direita;
-      case 16:
-        return baixo;
-    }
-    return random();
-  }
-
-  private Integer ehVizinhoVisao() {
-    if (ehPoupador(sensor.getVisaoIdentificacao()[7])) {
-      return cima;
-    } else if (ehPoupador(sensor.getVisaoIdentificacao()[12])) {
-      return direita;
-    } else if (ehPoupador(sensor.getVisaoIdentificacao()[16])) {
-      return baixo;
-    } else if (ehPoupador(sensor.getVisaoIdentificacao()[11])) {
-      return esquerda;
-    }
-    return null;
-  }
-
   private Integer ehVizinhoOlfato(int posicaoFaroPoupador) {
     switch (posicaoFaroPoupador) {
       case 1:
@@ -348,11 +314,6 @@ public class Ladrao extends ProgramaLadrao {
     }
     return null;
   }
-
-  private int random() {
-    return (int) (Math.random() * 5);
-  }
-
 
   private int faro() {
     int valorFaroPoupador = 0;
@@ -370,10 +331,7 @@ public class Ladrao extends ProgramaLadrao {
     return index;
   }
 
-  /*
-   * private int segueFaro(int posicaoFaroPoupador) {
-   *
-   *
-   * }
-   */
+  private int random() {
+    return (int) (Math.random() * 5);
+  }
 }
