@@ -1,9 +1,6 @@
 package algoritmo;
 
-import controle.Constantes;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -98,7 +95,6 @@ public class Ladrao extends ProgramaLadrao {
   public int[] preencheVisaoExploracao() {
     int[] posicaoVisaoExploracao = new int[4]; //Cima, Baixo, Esquerda, Direita.
     int[] visao = sensor.getVisaoIdentificacao();
-    int celulaVazia = 0;
 
     if (visao[posicaoCimaVisao] != 0) {
       posicaoVisaoExploracao[0] = 999;
