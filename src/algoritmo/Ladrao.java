@@ -32,12 +32,22 @@ public class Ladrao extends ProgramaLadrao {
   private int[] listaPosicoesBaixoEsquerda = {14, 15, 19, 20};
   private int[] listaPosicoesBaixoDireita = {17, 18, 22, 23};
 
+  private int numerodeMoedas = 0;
+  private boolean roubou = false;
+
+  private int x = 0;
+  private int y = 0;
+  private boolean mesmaPosicao = false;
+
 
   public int acao() {
     visitarCelula();
 
+    this.roubou = numerodeMoedas < sensor.getNumeroDeMoedas();
+    numerodeMoedas = sensor.getNumeroDeMoedas();
+
     Integer posicaoPoupador = existePoupadorVisao();
-    if (posicaoPoupador == null) {
+    if (this.roubou || this.mesmaPosicao || posicaoPoupador == null) {
       return explorar();
     } else {
       return perseguirPoupador(posicaoPoupador);
@@ -47,10 +57,12 @@ public class Ladrao extends ProgramaLadrao {
   }
 
   public void visitarCelula() {
-    int x = (int) sensor.getPosicao().getX();
-    int y = (int) sensor.getPosicao().getY();
+    this.mesmaPosicao = this.x == (int) sensor.getPosicao().getX() && this.y == (int) sensor.getPosicao().getY();
 
-    exploracao[x][y] += 1;
+    this.x = (int) sensor.getPosicao().getX();
+    this.y = (int) sensor.getPosicao().getY();
+
+    exploracao[this.x][this.y] += 1;
   }
 
   public int explorar() {
