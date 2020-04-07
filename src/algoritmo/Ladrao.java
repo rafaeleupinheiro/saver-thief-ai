@@ -16,6 +16,18 @@ public class Ladrao extends ProgramaLadrao {
   private int posicaoDireitaVisao = 12;
   private int posicaoLogoADireitaVisao = 13;
 
+  private int posicaoCimaOlfato = 1;
+  private int posicaoBaixoOlfato = 6;
+  private int posicaoEsquerdaOlfato = 3;
+  private int posicaoDireitaOlfato = 4;
+  private int posicaoCimaEsquerdaOlfato = 0;
+  private int posicaoBaixoEsquerdaOlfato = 5;
+  private int posicaoCimaDireitaOlfato = 2;
+  private int posicaoBaixoDireitaOlfato = 7;
+
+  private int[] listaPosicoesVisinhosOlfato = {1, 3, 4, 6};
+  private int[] listaPosicoesVisinhosOlfato2 = {0, 2, 5, 7};
+
   private int parado = 0;
   private int cima = 1;
   private int baixo = 2;
@@ -43,11 +55,18 @@ public class Ladrao extends ProgramaLadrao {
     this.roubou = numerodeMoedas < sensor.getNumeroDeMoedas();
     numerodeMoedas = sensor.getNumeroDeMoedas();
 
+    if (existe()) {
+      System.out.println();
+    }
+
     Integer posicaoPoupador = existePoupadorVisao();
-    if (this.roubou || this.mesmaPosicao || posicaoPoupador == null) {
+    Integer posicaoOlfato = existePoupadorOlfato();
+    if ((this.roubou && posicaoPoupador != null) || this.mesmaPosicao || posicaoPoupador == null || posicaoOlfato == null) {
       return explorar();
-    } else {
+    } else if (posicaoPoupador != null) {
       return perseguirPoupador(posicaoPoupador);
+    } else {
+      return perseguirOlfato(posicaoPoupador);
     }
 
 //    return random();
@@ -297,8 +316,65 @@ public class Ladrao extends ProgramaLadrao {
     return null;
   }
 
-  private Integer ehVizinhoOlfato(int posicaoFaroPoupador) {
-    switch (posicaoFaroPoupador) {
+  public Integer existePoupadorOlfato() {
+    Integer posicao = null;
+    Integer valor = 0;
+    int[] visao = sensor.getAmbienteOlfatoPoupador();
+    for (int i = 0; i < visao.length; i++) {
+      if (visao[i] > 0 && visao[i] > valor && ehVizinhoOlfato(i) != null) {
+        posicao = i;
+        valor = visao[i];
+      }
+    }
+
+    if (posicao == null) {
+      valor = 0;
+      for (int i = 0; i < visao.length; i++) {
+        if (visao[i] > 0 && visao[i] > valor) {
+          valor = visao[i];
+          posicao = i;
+        }
+      }
+    }
+
+    return posicao;
+  }
+
+  private int perseguirOlfato(int posicaoPoupador) {
+    Integer ehVizinhoOlfato = ehVizinhoOlfato(posicaoPoupador);
+    if (ehVizinhoOlfato != null) {
+      return ehVizinhoOlfato;
+    }
+
+    Integer posicaoCimaEsquerdaOlfato = posicaoCimaEsquerdaOlfato(posicaoPoupador);
+    if (posicaoCimaEsquerdaOlfato != null) {
+      return ehVizinhoOlfato(posicaoCimaEsquerdaOlfato);
+    }
+
+    Integer posicaoCimaDireitaOlfato = posicaoCimaDireitaOlfato(posicaoPoupador);
+    if (posicaoCimaDireitaOlfato != null) {
+      return ehVizinhoOlfato(posicaoCimaDireitaOlfato);
+    }
+
+    Integer posicaoBaixoEsquerdaOlfato = posicaoBaixoEsquerdaOlfato(posicaoPoupador);
+    if (posicaoBaixoEsquerdaOlfato != null) {
+      return ehVizinhoOlfato(posicaoBaixoEsquerdaOlfato);
+    }
+
+    Integer posicaoBaixoDireitaOlfato = posicaoBaixoDireitaOlfato(posicaoPoupador);
+    if (posicaoBaixoDireitaOlfato != null) {
+      return ehVizinhoOlfato(posicaoBaixoDireitaOlfato);
+    }
+
+    return 0;
+  }
+
+  /*private boolean ehVizinhoOlfato(int posicao) {
+    return posicao == posicaoCimaOlfato || posicao == posicaoBaixoOlfato || posicao == posicaoEsquerdaOlfato || posicao == posicaoDireitaOlfato;
+  }*/
+
+  private Integer ehVizinhoOlfato(int posicao) {
+    switch (posicao) {
       case 1:
         return cima;
       case 3:
@@ -309,6 +385,50 @@ public class Ladrao extends ProgramaLadrao {
         return baixo;
     }
     return null;
+  }
+
+  private Integer posicaoCimaEsquerdaOlfato(int posicaoOlfato) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoOlfato == posicaoCimaEsquerdaOlfato) {
+      aux.add(posicaoCimaOlfato);
+      aux.add(posicaoEsquerdaOlfato);
+    }
+
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
+  }
+
+  private Integer posicaoCimaDireitaOlfato(int posicaoOlfato) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoOlfato == posicaoCimaDireitaOlfato) {
+      aux.add(posicaoCimaOlfato);
+      aux.add(posicaoDireitaOlfato);
+    }
+
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
+  }
+
+  private Integer posicaoBaixoEsquerdaOlfato(int posicaoOlfato) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoOlfato == posicaoBaixoEsquerdaOlfato) {
+      aux.add(posicaoBaixoOlfato);
+      aux.add(posicaoEsquerdaOlfato);
+    }
+
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
+  }
+
+  private Integer posicaoBaixoDireitaOlfato(int posicaoOlfato) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoOlfato == posicaoBaixoDireitaOlfato) {
+      aux.add(posicaoBaixoOlfato);
+      aux.add(posicaoDireitaOlfato);
+    }
+
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
   }
 
   private int faro() {
@@ -329,5 +449,15 @@ public class Ladrao extends ProgramaLadrao {
 
   private int random() {
     return (int) (Math.random() * 5);
+  }
+
+  private boolean existe() {
+    int[] visao = sensor.getAmbienteOlfatoPoupador();
+    for (int i = 0; i < visao.length; i++) {
+      if (visao[i] > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 }
