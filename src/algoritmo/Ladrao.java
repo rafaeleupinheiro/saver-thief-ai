@@ -8,8 +8,12 @@ public class Ladrao extends ProgramaLadrao {
   private int[][] exploracao = new int[30][30];
 
   private int posicaoCimaVisao = 7;
+  private int posicaoCimaEsquerdaVisao = 6;
+  private int posicaoCimaDireitaVisao = 8;
   private int posicaoLogoAcimaVisao = 2;
   private int posicaoBaixoVisao = 16;
+  private int posicaoBaixoEsquerdaVisao = 15;
+  private int posicaoBaixoDireitaVisao = 17;
   private int posicaoLogoAbaixoVisao = 21;
   private int posicaoEsquerdaVisao = 11;
   private int posicaoLogoAEsquerdaVisao = 10;
@@ -63,11 +67,11 @@ public class Ladrao extends ProgramaLadrao {
     Integer posicaoOlfato = existePoupadorOlfato();
     if ((this.roubou && posicaoPoupador != null) || this.mesmaPosicao || posicaoPoupador == null || posicaoOlfato == null) {
       return explorar();
-    } else if (posicaoPoupador != null) {
-      return perseguirPoupador(posicaoPoupador);
     } else {
+      return perseguirPoupador(posicaoPoupador);
+    }/* else {
       return perseguirOlfato(posicaoPoupador);
-    }
+    }*/
 
 //    return random();
   }
@@ -176,26 +180,6 @@ public class Ladrao extends ProgramaLadrao {
       return ehVizinhoPoupador;
     }
 
-    Integer posicaoPoupadorCimaEsquerdaVisao = posicaoPoupadorCimaEsquerdaVisao(posicaoPoupador);
-    if (posicaoPoupadorCimaEsquerdaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorCimaEsquerdaVisao);
-    }
-
-    Integer posicaoPoupadorCimaDireitaVisao = posicaoPoupadorCimaDireitaVisao(posicaoPoupador);
-    if (posicaoPoupadorCimaDireitaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorCimaDireitaVisao);
-    }
-
-    Integer posicaoPoupadorBaixoEsquerdaVisao = posicaoPoupadorBaixoEsquerdaVisao(posicaoPoupador);
-    if (posicaoPoupadorBaixoEsquerdaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorBaixoEsquerdaVisao);
-    }
-
-    Integer posicaoPoupadorBaixoDireitaVisao = posicaoPoupadorBaixoDireitaVisao(posicaoPoupador);
-    if (posicaoPoupadorBaixoDireitaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorBaixoDireitaVisao);
-    }
-
     Integer posicaoPoupadorLogoAcimaVisao = posicaoPoupadorLogoAcimaVisao(posicaoPoupador);
     if (posicaoPoupadorLogoAcimaVisao != null) {
       return ehVizinhoPoupador(posicaoPoupadorLogoAcimaVisao);
@@ -216,7 +200,116 @@ public class Ladrao extends ProgramaLadrao {
       return ehVizinhoPoupador(posicaoPoupadorLogoADireitaVisao);
     }
 
+    Integer posicaoPoupadorCimaEsquerdaVisao = posicaoPoupadorCimaEsquerdaVisao(posicaoPoupador);
+    if (posicaoPoupadorCimaEsquerdaVisao != null) {
+      return ehVizinhoPoupador(posicaoPoupadorCimaEsquerdaVisao);
+    }
+
+    Integer posicaoPoupadorCimaDireitaVisao = posicaoPoupadorCimaDireitaVisao(posicaoPoupador);
+    if (posicaoPoupadorCimaDireitaVisao != null) {
+      return ehVizinhoPoupador(posicaoPoupadorCimaDireitaVisao);
+    }
+
+    Integer posicaoPoupadorBaixoEsquerdaVisao = posicaoPoupadorBaixoEsquerdaVisao(posicaoPoupador);
+    if (posicaoPoupadorBaixoEsquerdaVisao != null) {
+      return ehVizinhoPoupador(posicaoPoupadorBaixoEsquerdaVisao);
+    }
+
+    Integer posicaoPoupadorBaixoDireitaVisao = posicaoPoupadorBaixoDireitaVisao(posicaoPoupador);
+    if (posicaoPoupadorBaixoDireitaVisao != null) {
+      return ehVizinhoPoupador(posicaoPoupadorBaixoDireitaVisao);
+    }
+
+    Integer posicaoOlfato = existePoupadorOlfato();
+    Integer ehVizinhoOlfato = ehVizinhoOlfato(posicaoOlfato);
+    if (ehVizinhoOlfato != null) {
+      return ehVizinhoOlfato;
+    }
     return 0;
+  }
+
+  private Integer posicaoPoupadorLogoAcimaVisao(int posicaoPoupador) {
+    if (posicaoPoupador == posicaoLogoAcimaVisao && ehCelularVazia(posicaoCimaVisao)) {
+      return posicaoCimaVisao;
+    }
+    return null;
+  }
+
+  private Integer posicaoPoupadorLogoAbaixoVisao(int posicaoPoupador) {
+    if (posicaoPoupador == posicaoLogoAbaixoVisao && ehCelularVazia(posicaoBaixoVisao)) {
+      return posicaoBaixoVisao;
+    }
+    return null;
+  }
+
+  private Integer posicaoPoupadorLogoAEsquerdaVisao(int posicaoPoupador) {
+    if (posicaoPoupador == posicaoLogoAEsquerdaVisao && ehCelularVazia(posicaoEsquerdaVisao)) {
+      return posicaoEsquerdaVisao;
+    }
+    return null;
+  }
+
+  private Integer posicaoPoupadorLogoADireitaVisao(int posicaoPoupador) {
+    if (posicaoPoupador == posicaoLogoADireitaVisao && ehCelularVazia(posicaoDireitaVisao)) {
+      return posicaoDireitaVisao;
+    }
+    return null;
+  }
+
+  private Integer posicaoPoupadorCimaEsquerdaVisao(int posicaoPoupador) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoPoupador == posicaoCimaEsquerdaVisao) {
+      if (ehCelularVazia(posicaoCimaVisao)) {
+        aux.add(posicaoCimaVisao);
+      }
+      if (ehCelularVazia(posicaoEsquerdaVisao)) {
+        aux.add(posicaoEsquerdaVisao);
+      }
+    }
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
+  }
+
+  private Integer posicaoPoupadorCimaDireitaVisao(int posicaoPoupador) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoPoupador == posicaoCimaDireitaVisao) {
+      if (ehCelularVazia(posicaoCimaVisao)) {
+        aux.add(posicaoCimaVisao);
+      }
+      if (ehCelularVazia(posicaoDireitaVisao)) {
+        aux.add(posicaoDireitaVisao);
+      }
+    }
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
+  }
+
+  private Integer posicaoPoupadorBaixoEsquerdaVisao(int posicaoPoupador) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoPoupador == posicaoBaixoEsquerdaVisao) {
+      if (ehCelularVazia(posicaoBaixoVisao)) {
+        aux.add(posicaoBaixoVisao);
+      }
+      if (ehCelularVazia(posicaoEsquerdaVisao)) {
+        aux.add(posicaoEsquerdaVisao);
+      }
+    }
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
+  }
+
+  private Integer posicaoPoupadorBaixoDireitaVisao(int posicaoPoupador) {
+    List<Integer> aux = new ArrayList<>();
+    if (posicaoPoupador == posicaoBaixoEsquerdaVisao) {
+      if (ehCelularVazia(posicaoBaixoVisao)) {
+        aux.add(posicaoBaixoVisao);
+      }
+      if (ehCelularVazia(posicaoDireitaVisao)) {
+        aux.add(posicaoDireitaVisao);
+      }
+    }
+    Collections.shuffle(aux); // Embaralhar
+    return !aux.isEmpty() ? aux.get(0) : null;
   }
 
   private Integer ehVizinhoPoupador(int posicaoPoupador) {
@@ -232,96 +325,12 @@ public class Ladrao extends ProgramaLadrao {
     return null;
   }
 
-  private Integer posicaoPoupadorCimaEsquerdaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    for (int i = 0; i < listaPosicoesCimaEsquerda.length; i++) {
-      if (posicaoPoupador == listaPosicoesCimaEsquerda[i]) {
-        aux.add(posicaoCimaVisao);
-        aux.add(posicaoEsquerdaVisao);
-        break;
-      }
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private Integer posicaoPoupadorCimaDireitaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    for (int i = 0; i < listaPosicoesCimaDireita.length; i++) {
-      if (posicaoPoupador == listaPosicoesCimaDireita[i]) {
-        aux.add(posicaoCimaVisao);
-        aux.add(posicaoDireitaVisao);
-        break;
-      }
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private Integer posicaoPoupadorBaixoEsquerdaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    for (int i = 0; i < listaPosicoesBaixoEsquerda.length; i++) {
-      if (posicaoPoupador == listaPosicoesBaixoEsquerda[i]) {
-        aux.add(posicaoBaixoVisao);
-        aux.add(posicaoEsquerdaVisao);
-        break;
-      }
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private Integer posicaoPoupadorBaixoDireitaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    for (int i = 0; i < listaPosicoesBaixoDireita.length; i++) {
-      if (posicaoPoupador == listaPosicoesBaixoDireita[i]) {
-        aux.add(posicaoBaixoVisao);
-        aux.add(posicaoDireitaVisao);
-        break;
-      }
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private Integer posicaoPoupadorLogoAcimaVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoAcimaVisao) {
-      return posicaoCimaVisao;
-    }
-    return null;
-  }
-
-  private Integer posicaoPoupadorLogoAbaixoVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoAbaixoVisao) {
-      return posicaoBaixoVisao;
-    }
-    return null;
-  }
-
-  private Integer posicaoPoupadorLogoAEsquerdaVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoAEsquerdaVisao) {
-      return posicaoEsquerdaVisao;
-    }
-    return null;
-  }
-
-  private Integer posicaoPoupadorLogoADireitaVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoADireitaVisao) {
-      return posicaoDireitaVisao;
-    }
-    return null;
-  }
-
   public Integer existePoupadorOlfato() {
     Integer posicao = null;
-    Integer valor = 0;
+    Integer valor = 99;
     int[] visao = sensor.getAmbienteOlfatoPoupador();
     for (int i = 0; i < visao.length; i++) {
-      if (visao[i] > 0 && visao[i] > valor && ehVizinhoOlfato(i) != null) {
+      if (visao[i] != 0 && visao[i] < valor && ehVizinhoOlfato(i) != null) {
         posicao = i;
         valor = visao[i];
       }
@@ -330,7 +339,7 @@ public class Ladrao extends ProgramaLadrao {
     if (posicao == null) {
       valor = 0;
       for (int i = 0; i < visao.length; i++) {
-        if (visao[i] > 0 && visao[i] > valor) {
+        if (visao[i] != 0 && visao[i] < valor) {
           valor = visao[i];
           posicao = i;
         }
@@ -457,6 +466,13 @@ public class Ladrao extends ProgramaLadrao {
       if (visao[i] > 0) {
         return true;
       }
+    }
+    return false;
+  }
+
+  private boolean ehCelularVazia(int index) {
+    if (sensor.getVisaoIdentificacao()[index] == 0) {
+      return true;
     }
     return false;
   }
