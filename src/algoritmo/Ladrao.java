@@ -40,10 +40,10 @@ public class Ladrao extends ProgramaLadrao {
 
   private static int[] experiencia = new int[]{0, 0, 0, 0};
 
-  private int[] listaPosicoesCimaEsquerda = {0, 1, 5, 6};
-  private int[] listaPosicoesCimaDireita = {3, 4, 8, 9};
-  private int[] listaPosicoesBaixoEsquerda = {14, 15, 19, 20};
-  private int[] listaPosicoesBaixoDireita = {17, 18, 22, 23};
+  private int[] listaPosicoesCimaEsquerda = {0, 1, 5};
+  private int[] listaPosicoesCimaDireita = {3, 4, 9};
+  private int[] listaPosicoesBaixoEsquerda = {14, 19, 20};
+  private int[] listaPosicoesBaixoDireita = {18, 22, 23};
 
   private int numerodeMoedas = 0;
   private boolean roubou = false;
@@ -52,28 +52,26 @@ public class Ladrao extends ProgramaLadrao {
   private int y = 0;
   private boolean mesmaPosicao = false;
 
+  int tempoRoubo = 0;
 
   public int acao() {
     visitarCelula();
 
     this.roubou = numerodeMoedas < sensor.getNumeroDeMoedas();
     numerodeMoedas = sensor.getNumeroDeMoedas();
-
-    if (existe()) {
-      System.out.println();
+    if (this.roubou) {
+      tempoRoubo = 3;
     }
 
     Integer posicaoPoupador = existePoupadorVisao();
-    Integer posicaoOlfato = existePoupadorOlfato();
-    if ((this.roubou && posicaoPoupador != null) || this.mesmaPosicao || posicaoPoupador == null || posicaoOlfato == null) {
+    if (tempoRoubo > 0 || this.mesmaPosicao || posicaoPoupador == null) {
+      if (tempoRoubo > 0) {
+        tempoRoubo--;
+      }
       return explorar();
     } else {
       return perseguirPoupador(posicaoPoupador);
-    }/* else {
-      return perseguirOlfato(posicaoPoupador);
-    }*/
-
-//    return random();
+    }
   }
 
   public void visitarCelula() {
@@ -178,138 +176,220 @@ public class Ladrao extends ProgramaLadrao {
     Integer ehVizinhoPoupador = ehVizinhoPoupador(posicaoPoupador);
     if (ehVizinhoPoupador != null) {
       return ehVizinhoPoupador;
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[posicaoLogoAcimaVisao])) {
+      return posicaoPoupadorLogoAcimaVisao();
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[posicaoLogoAbaixoVisao])) {
+      return posicaoPoupadorLogoAbaixoVisao();
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[posicaoLogoADireitaVisao])) {
+      return posicaoPoupadorLogoADireitaVisao();
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[posicaoLogoAEsquerdaVisao])) {
+      return posicaoPoupadorLogoAEsquerdaVisao();
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[0]) || ehPoupador(sensor.getVisaoIdentificacao()[1])
+        || ehPoupador(sensor.getVisaoIdentificacao()[5]) || ehPoupador(sensor.getVisaoIdentificacao()[6])) {
+      return posicaoPoupadorCimaEsquerdaVisao();
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[14]) || ehPoupador(sensor.getVisaoIdentificacao()[15])
+        || ehPoupador(sensor.getVisaoIdentificacao()[19]) || ehPoupador(sensor.getVisaoIdentificacao()[20])) {
+      return posicaoPoupadorBaixoEsquerdaVisao();
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[3]) || ehPoupador(sensor.getVisaoIdentificacao()[4])
+        || ehPoupador(sensor.getVisaoIdentificacao()[8]) || ehPoupador(sensor.getVisaoIdentificacao()[9])) {
+      return posicaoPoupadorCimaDireitaVisao();
+    } else if (ehPoupador(sensor.getVisaoIdentificacao()[17]) || ehPoupador(sensor.getVisaoIdentificacao()[18])
+        || ehPoupador(sensor.getVisaoIdentificacao()[22]) || ehPoupador(sensor.getVisaoIdentificacao()[23])) {
+      return posicaoPoupadorBaixoDireitaVisao();
     }
-
-    Integer posicaoPoupadorLogoAcimaVisao = posicaoPoupadorLogoAcimaVisao(posicaoPoupador);
-    if (posicaoPoupadorLogoAcimaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorLogoAcimaVisao);
-    }
-
-    Integer posicaoPoupadorLogoAbaixoVisao = posicaoPoupadorLogoAbaixoVisao(posicaoPoupador);
-    if (posicaoPoupadorLogoAbaixoVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorLogoAbaixoVisao);
-    }
-
-    Integer posicaoPoupadorLogoAEsquerdaVisao = posicaoPoupadorLogoAEsquerdaVisao(posicaoPoupador);
-    if (posicaoPoupadorLogoAEsquerdaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorLogoAEsquerdaVisao);
-    }
-
-    Integer posicaoPoupadorLogoADireitaVisao = posicaoPoupadorLogoADireitaVisao(posicaoPoupador);
-    if (posicaoPoupadorLogoADireitaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorLogoADireitaVisao);
-    }
-
-    Integer posicaoPoupadorCimaEsquerdaVisao = posicaoPoupadorCimaEsquerdaVisao(posicaoPoupador);
-    if (posicaoPoupadorCimaEsquerdaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorCimaEsquerdaVisao);
-    }
-
-    Integer posicaoPoupadorCimaDireitaVisao = posicaoPoupadorCimaDireitaVisao(posicaoPoupador);
-    if (posicaoPoupadorCimaDireitaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorCimaDireitaVisao);
-    }
-
-    Integer posicaoPoupadorBaixoEsquerdaVisao = posicaoPoupadorBaixoEsquerdaVisao(posicaoPoupador);
-    if (posicaoPoupadorBaixoEsquerdaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorBaixoEsquerdaVisao);
-    }
-
-    Integer posicaoPoupadorBaixoDireitaVisao = posicaoPoupadorBaixoDireitaVisao(posicaoPoupador);
-    if (posicaoPoupadorBaixoDireitaVisao != null) {
-      return ehVizinhoPoupador(posicaoPoupadorBaixoDireitaVisao);
-    }
-
-    Integer posicaoOlfato = existePoupadorOlfato();
-    Integer ehVizinhoOlfato = ehVizinhoOlfato(posicaoOlfato);
-    if (ehVizinhoOlfato != null) {
-      return ehVizinhoOlfato;
-    }
-    return 0;
+    return parado;
   }
 
-  private Integer posicaoPoupadorLogoAcimaVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoAcimaVisao && ehCelularVazia(posicaoCimaVisao)) {
-      return posicaoCimaVisao;
+  private int posicaoPoupadorLogoAcimaVisao() {
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+      return cima;
+    } else {
+      int valorOlfatoEsquerda = 0;
+      int valorOlfatoDireita = 0;
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+        valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+        valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
+      }
+
+      if (valorOlfatoEsquerda != 0 && valorOlfatoEsquerda <= valorOlfatoDireita) {
+        return esquerda;
+      } else if (valorOlfatoDireita != 0 && valorOlfatoDireita <= valorOlfatoEsquerda) {
+        return direita;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+        return esquerda;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+        return direita;
+      } else {
+        return parado;
+      }
     }
-    return null;
   }
 
-  private Integer posicaoPoupadorLogoAbaixoVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoAbaixoVisao && ehCelularVazia(posicaoBaixoVisao)) {
-      return posicaoBaixoVisao;
+  private int posicaoPoupadorLogoAbaixoVisao() {
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+      return baixo;
+    } else {
+      int valorOlfatoEsquerda = 0;
+      int valorOlfatoDireita = 0;
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+        valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+        valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
+      }
+
+      if (valorOlfatoEsquerda != 0 && valorOlfatoEsquerda <= valorOlfatoDireita) {
+        return esquerda;
+      } else if (valorOlfatoDireita != 0 && valorOlfatoDireita <= valorOlfatoEsquerda) {
+        return direita;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+        return esquerda;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+        return direita;
+      } else {
+        return parado;
+      }
     }
-    return null;
   }
 
-  private Integer posicaoPoupadorLogoAEsquerdaVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoAEsquerdaVisao && ehCelularVazia(posicaoEsquerdaVisao)) {
-      return posicaoEsquerdaVisao;
+  private int posicaoPoupadorLogoAEsquerdaVisao() {
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+      return esquerda;
+    } else {
+      int valorOlfatoCima = 0;
+      int valorOlfatoBaixo = 0;
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+        valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+        valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
+      }
+
+      if (valorOlfatoCima != 0 && valorOlfatoCima <= valorOlfatoBaixo) {
+        return cima;
+      } else if (valorOlfatoBaixo != 0 && valorOlfatoBaixo <= valorOlfatoCima) {
+        return baixo;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+        return cima;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+        return baixo;
+      } else {
+        return parado;
+      }
     }
-    return null;
   }
 
-  private Integer posicaoPoupadorLogoADireitaVisao(int posicaoPoupador) {
-    if (posicaoPoupador == posicaoLogoADireitaVisao && ehCelularVazia(posicaoDireitaVisao)) {
-      return posicaoDireitaVisao;
+  private int posicaoPoupadorLogoADireitaVisao() {
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+      return direita;
+    } else {
+      int valorOlfatoCima = 0;
+      int valorOlfatoBaixo = 0;
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+        valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+        valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
+      }
+      if (valorOlfatoCima != 0 && valorOlfatoCima <= valorOlfatoBaixo) {
+        return cima;
+      } else if (valorOlfatoBaixo != 0 && valorOlfatoBaixo <= valorOlfatoCima) {
+        return baixo;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+        return cima;
+      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+        return baixo;
+      } else {
+        return parado;
+      }
     }
-    return null;
   }
 
-  private Integer posicaoPoupadorCimaEsquerdaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoPoupador == posicaoCimaEsquerdaVisao) {
-      if (ehCelularVazia(posicaoCimaVisao)) {
-        aux.add(posicaoCimaVisao);
-      }
-      if (ehCelularVazia(posicaoEsquerdaVisao)) {
-        aux.add(posicaoEsquerdaVisao);
-      }
+  private int posicaoPoupadorCimaEsquerdaVisao() {
+    int valorOlfatoCima = 0;
+    int valorOlfatoEsquerda = 0;
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+      valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+      valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
     }
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
+
+    if (valorOlfatoCima != 0 && valorOlfatoCima <= valorOlfatoEsquerda) {
+      return cima;
+    } else if (valorOlfatoEsquerda != 0 && valorOlfatoEsquerda <= valorOlfatoCima) {
+      return esquerda;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+      return cima;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+      return esquerda;
+    } else {
+      return parado;
+    }
   }
 
-  private Integer posicaoPoupadorCimaDireitaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoPoupador == posicaoCimaDireitaVisao) {
-      if (ehCelularVazia(posicaoCimaVisao)) {
-        aux.add(posicaoCimaVisao);
-      }
-      if (ehCelularVazia(posicaoDireitaVisao)) {
-        aux.add(posicaoDireitaVisao);
-      }
+
+  private int posicaoPoupadorCimaDireitaVisao() {
+    int valorOlfatoCima = 0;
+    int valorOlfatoDireita = 0;
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+      valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+      valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
     }
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
+
+    if (valorOlfatoCima != 0 && valorOlfatoCima <= valorOlfatoDireita) {
+      return cima;
+    } else if (valorOlfatoDireita != 0 && valorOlfatoDireita <= valorOlfatoCima) {
+      return direita;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
+      return cima;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+      return direita;
+    } else {
+      return parado;
+    }
   }
 
-  private Integer posicaoPoupadorBaixoEsquerdaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoPoupador == posicaoBaixoEsquerdaVisao) {
-      if (ehCelularVazia(posicaoBaixoVisao)) {
-        aux.add(posicaoBaixoVisao);
-      }
-      if (ehCelularVazia(posicaoEsquerdaVisao)) {
-        aux.add(posicaoEsquerdaVisao);
-      }
+  private int posicaoPoupadorBaixoEsquerdaVisao() {
+    int valorOlfatoBaixo = 0;
+    int valorOlfatoEsquerda = 0;
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+      valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+      valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
     }
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
+
+    if (valorOlfatoBaixo != 0 && valorOlfatoBaixo <= valorOlfatoEsquerda) {
+      return baixo;
+    } else if (valorOlfatoEsquerda != 0 && valorOlfatoEsquerda <= valorOlfatoBaixo) {
+      return esquerda;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+      return baixo;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+      return esquerda;
+    } else {
+      return parado;
+    }
   }
 
-  private Integer posicaoPoupadorBaixoDireitaVisao(int posicaoPoupador) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoPoupador == posicaoBaixoEsquerdaVisao) {
-      if (ehCelularVazia(posicaoBaixoVisao)) {
-        aux.add(posicaoBaixoVisao);
-      }
-      if (ehCelularVazia(posicaoDireitaVisao)) {
-        aux.add(posicaoDireitaVisao);
-      }
+  private int posicaoPoupadorBaixoDireitaVisao() {
+    int valorOlfatoBaixo = 0;
+    int valorOlfatoDireita = 0;
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+      valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+      valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
     }
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
+
+    if (valorOlfatoBaixo != 0 && valorOlfatoBaixo <= valorOlfatoDireita) {
+      return baixo;
+    } else if (valorOlfatoDireita != 0 && valorOlfatoDireita <= valorOlfatoBaixo) {
+      return direita;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+      return baixo;
+    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+      return direita;
+    } else {
+      return parado;
+    }
   }
 
   private Integer ehVizinhoPoupador(int posicaoPoupador) {
@@ -325,153 +405,8 @@ public class Ladrao extends ProgramaLadrao {
     return null;
   }
 
-  public Integer existePoupadorOlfato() {
-    Integer posicao = null;
-    Integer valor = 99;
-    int[] visao = sensor.getAmbienteOlfatoPoupador();
-    for (int i = 0; i < visao.length; i++) {
-      if (visao[i] != 0 && visao[i] < valor && ehVizinhoOlfato(i) != null) {
-        posicao = i;
-        valor = visao[i];
-      }
-    }
-
-    if (posicao == null) {
-      valor = 0;
-      for (int i = 0; i < visao.length; i++) {
-        if (visao[i] != 0 && visao[i] < valor) {
-          valor = visao[i];
-          posicao = i;
-        }
-      }
-    }
-
-    return posicao;
-  }
-
-  private int perseguirOlfato(int posicaoPoupador) {
-    Integer ehVizinhoOlfato = ehVizinhoOlfato(posicaoPoupador);
-    if (ehVizinhoOlfato != null) {
-      return ehVizinhoOlfato;
-    }
-
-    Integer posicaoCimaEsquerdaOlfato = posicaoCimaEsquerdaOlfato(posicaoPoupador);
-    if (posicaoCimaEsquerdaOlfato != null) {
-      return ehVizinhoOlfato(posicaoCimaEsquerdaOlfato);
-    }
-
-    Integer posicaoCimaDireitaOlfato = posicaoCimaDireitaOlfato(posicaoPoupador);
-    if (posicaoCimaDireitaOlfato != null) {
-      return ehVizinhoOlfato(posicaoCimaDireitaOlfato);
-    }
-
-    Integer posicaoBaixoEsquerdaOlfato = posicaoBaixoEsquerdaOlfato(posicaoPoupador);
-    if (posicaoBaixoEsquerdaOlfato != null) {
-      return ehVizinhoOlfato(posicaoBaixoEsquerdaOlfato);
-    }
-
-    Integer posicaoBaixoDireitaOlfato = posicaoBaixoDireitaOlfato(posicaoPoupador);
-    if (posicaoBaixoDireitaOlfato != null) {
-      return ehVizinhoOlfato(posicaoBaixoDireitaOlfato);
-    }
-
-    return 0;
-  }
-
-  /*private boolean ehVizinhoOlfato(int posicao) {
-    return posicao == posicaoCimaOlfato || posicao == posicaoBaixoOlfato || posicao == posicaoEsquerdaOlfato || posicao == posicaoDireitaOlfato;
-  }*/
-
-  private Integer ehVizinhoOlfato(int posicao) {
-    switch (posicao) {
-      case 1:
-        return cima;
-      case 3:
-        return esquerda;
-      case 4:
-        return direita;
-      case 6:
-        return baixo;
-    }
-    return null;
-  }
-
-  private Integer posicaoCimaEsquerdaOlfato(int posicaoOlfato) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoOlfato == posicaoCimaEsquerdaOlfato) {
-      aux.add(posicaoCimaOlfato);
-      aux.add(posicaoEsquerdaOlfato);
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private Integer posicaoCimaDireitaOlfato(int posicaoOlfato) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoOlfato == posicaoCimaDireitaOlfato) {
-      aux.add(posicaoCimaOlfato);
-      aux.add(posicaoDireitaOlfato);
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private Integer posicaoBaixoEsquerdaOlfato(int posicaoOlfato) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoOlfato == posicaoBaixoEsquerdaOlfato) {
-      aux.add(posicaoBaixoOlfato);
-      aux.add(posicaoEsquerdaOlfato);
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private Integer posicaoBaixoDireitaOlfato(int posicaoOlfato) {
-    List<Integer> aux = new ArrayList<>();
-    if (posicaoOlfato == posicaoBaixoDireitaOlfato) {
-      aux.add(posicaoBaixoOlfato);
-      aux.add(posicaoDireitaOlfato);
-    }
-
-    Collections.shuffle(aux); // Embaralhar
-    return !aux.isEmpty() ? aux.get(0) : null;
-  }
-
-  private int faro() {
-    int valorFaroPoupador = 0;
-    Integer index = null;
-    for (int i = 0; i < sensor.getAmbienteOlfatoPoupador().length; i++) {
-      int valor = sensor.getAmbienteOlfatoPoupador()[i];
-      if (valorFaroPoupador == 0 && valor > 0) {
-        valorFaroPoupador = valor;
-        index = i;
-      } else if (valor > 0 && valor < valorFaroPoupador) {
-        valorFaroPoupador = valor;
-        index = i;
-      }
-    }
-    return index;
-  }
-
-  private int random() {
-    return (int) (Math.random() * 5);
-  }
-
-  private boolean existe() {
-    int[] visao = sensor.getAmbienteOlfatoPoupador();
-    for (int i = 0; i < visao.length; i++) {
-      if (visao[i] > 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private boolean ehCelularVazia(int index) {
-    if (sensor.getVisaoIdentificacao()[index] == 0) {
+  private boolean ehCelularVazia(int valor) {
+    if (valor == 0) {
       return true;
     }
     return false;
