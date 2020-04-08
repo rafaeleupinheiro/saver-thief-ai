@@ -194,7 +194,8 @@ public class Ladrao extends ProgramaLadrao {
       int valorOlfatoDireita = 0;
       if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
         valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
-      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+      }
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
         valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
       }
 
@@ -220,7 +221,8 @@ public class Ladrao extends ProgramaLadrao {
       int valorOlfatoDireita = 0;
       if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
         valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
-      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+      }
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
         valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
       }
 
@@ -246,7 +248,8 @@ public class Ladrao extends ProgramaLadrao {
       int valorOlfatoBaixo = 0;
       if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
         valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
-      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+      }
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
         valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
       }
 
@@ -272,7 +275,8 @@ public class Ladrao extends ProgramaLadrao {
       int valorOlfatoBaixo = 0;
       if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
         valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
-      } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
+      }
+      if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
         valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
       }
       if (valorOlfatoCima != 0 && valorOlfatoCima <= valorOlfatoBaixo) {
@@ -294,7 +298,8 @@ public class Ladrao extends ProgramaLadrao {
     int valorOlfatoEsquerda = 0;
     if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
       valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
-    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+    }
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
       valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
     }
 
@@ -317,7 +322,8 @@ public class Ladrao extends ProgramaLadrao {
     int valorOlfatoDireita = 0;
     if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoCimaVisao])) {
       valorOlfatoCima = sensor.getAmbienteOlfatoPoupador()[posicaoCimaOlfato];
-    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+    }
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
       valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
     }
 
@@ -339,7 +345,8 @@ public class Ladrao extends ProgramaLadrao {
     int valorOlfatoEsquerda = 0;
     if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
       valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
-    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
+    }
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoEsquerdaVisao])) {
       valorOlfatoEsquerda = sensor.getAmbienteOlfatoPoupador()[posicaoEsquerdaOlfato];
     }
 
@@ -361,7 +368,8 @@ public class Ladrao extends ProgramaLadrao {
     int valorOlfatoDireita = 0;
     if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoBaixoVisao])) {
       valorOlfatoBaixo = sensor.getAmbienteOlfatoPoupador()[posicaoBaixoOlfato];
-    } else if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
+    }
+    if (ehCelularVazia(sensor.getVisaoIdentificacao()[posicaoDireitaVisao])) {
       valorOlfatoDireita = sensor.getAmbienteOlfatoPoupador()[posicaoDireitaOlfato];
     }
 
@@ -437,16 +445,16 @@ public class Ladrao extends ProgramaLadrao {
     Integer valor = 99;
     int[] visao = sensor.getAmbienteOlfatoPoupador();
     for (int i = 0; i < visao.length; i++) {
-      if (visao[i] != 0 && visao[i] < valor && ehVizinhoOlfato(i) != null) {
+      if (visao[i] > 0 && visao[i] < valor && ehVizinhoOlfato(i) != null) {
         posicao = i;
         valor = visao[i];
       }
     }
 
     if (posicao == null) {
-      valor = 0;
+      valor = 99;
       for (int i = 0; i < visao.length; i++) {
-        if (visao[i] != 0 && visao[i] < valor) {
+        if (visao[i] > 0 && visao[i] < valor) {
           valor = visao[i];
           posicao = i;
         }
@@ -467,5 +475,14 @@ public class Ladrao extends ProgramaLadrao {
       return direita;
     }
     return null;
+  }
+
+  private boolean existeOlfato() {
+    for (int i = 0; i < sensor.getAmbienteOlfatoPoupador().length; i++) {
+      if (sensor.getAmbienteOlfatoPoupador()[i] > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 }
