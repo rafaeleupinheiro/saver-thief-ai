@@ -64,7 +64,10 @@ public class Ladrao extends ProgramaLadrao {
     }
 
     Integer posicaoPoupador = existePoupadorVisao();
-    if (tempoRoubo > 0 || this.mesmaPosicao || posicaoPoupador == null) {
+    Integer posicaoOlfato = existePoupadorOlfato();
+    if (posicaoPoupador == null && posicaoOlfato != null) {
+      return perseguirOlfato(posicaoOlfato);
+    } else if (tempoRoubo > 0 || this.mesmaPosicao || posicaoPoupador == null) {
       if (tempoRoubo > 0) {
         tempoRoubo--;
       }
@@ -153,23 +156,6 @@ public class Ladrao extends ProgramaLadrao {
         return exploracao[x + 1][y];
     }
     return 0;
-  }
-
-  public Integer existePoupadorVisao() {
-    int[] visao = sensor.getVisaoIdentificacao();
-    for (int i = 0; i < visao.length; i++) {
-      if (ehPoupador(visao[i])) {
-        return i;
-      }
-    }
-    return null;
-  }
-
-  private boolean ehPoupador(int valor) {
-    if (valor == 100 || valor == 110) {
-      return true;
-    }
-    return false;
   }
 
   private int perseguirPoupador(int posicaoPoupador) {
@@ -392,6 +378,23 @@ public class Ladrao extends ProgramaLadrao {
     }
   }
 
+  public Integer existePoupadorVisao() {
+    int[] visao = sensor.getVisaoIdentificacao();
+    for (int i = 0; i < visao.length; i++) {
+      if (ehPoupador(visao[i])) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  private boolean ehPoupador(int valor) {
+    if (valor == 100 || valor == 110) {
+      return true;
+    }
+    return false;
+  }
+
   private Integer ehVizinhoPoupador(int posicaoPoupador) {
     if (posicaoPoupador == posicaoCimaVisao) {
       return cima;
@@ -410,5 +413,59 @@ public class Ladrao extends ProgramaLadrao {
       return true;
     }
     return false;
+  }
+
+  private int perseguirOlfato(int posicaoOlfato) {
+    Integer ehVizinhoOlfato = ehVizinhoOlfato(posicaoOlfato);
+    if (ehVizinhoOlfato != null) {
+      return ehVizinhoOlfato;
+    } else if (posicaoOlfato == posicaoCimaEsquerdaOlfato) {
+      return posicaoPoupadorCimaEsquerdaVisao();
+    } else if (posicaoOlfato == posicaoCimaDireitaOlfato) {
+      return posicaoPoupadorCimaDireitaVisao();
+    } else if (posicaoOlfato == posicaoBaixoEsquerdaOlfato) {
+      return posicaoPoupadorBaixoEsquerdaVisao();
+    } else if (posicaoOlfato == posicaoBaixoDireitaOlfato) {
+      return posicaoPoupadorBaixoDireitaVisao();
+    } else {
+      return parado;
+    }
+  }
+
+  public Integer existePoupadorOlfato() {
+    Integer posicao = null;
+    Integer valor = 99;
+    int[] visao = sensor.getAmbienteOlfatoPoupador();
+    for (int i = 0; i < visao.length; i++) {
+      if (visao[i] != 0 && visao[i] < valor && ehVizinhoOlfato(i) != null) {
+        posicao = i;
+        valor = visao[i];
+      }
+    }
+
+    if (posicao == null) {
+      valor = 0;
+      for (int i = 0; i < visao.length; i++) {
+        if (visao[i] != 0 && visao[i] < valor) {
+          valor = visao[i];
+          posicao = i;
+        }
+      }
+    }
+
+    return posicao;
+  }
+
+  private Integer ehVizinhoOlfato(int posicaoOlfato) {
+    if (posicaoOlfato == posicaoCimaOlfato) {
+      return cima;
+    } else if (posicaoOlfato == posicaoBaixoOlfato) {
+      return baixo;
+    } else if (posicaoOlfato == posicaoEsquerdaOlfato) {
+      return esquerda;
+    } else if (posicaoOlfato == posicaoDireitaOlfato) {
+      return direita;
+    }
+    return null;
   }
 }
